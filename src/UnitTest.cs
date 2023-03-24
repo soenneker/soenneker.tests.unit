@@ -34,22 +34,27 @@ public abstract class UnitTest : LoggingTest
 
     private readonly InjectableTestOutputSink _injectableTestOutputSink = new();
 
-    protected UnitTest(ITestOutputHelper testOutputHelper)
+    /// <param name="testOutputHelper"></param>
+    /// <param name="createLogger">Typically this is true unless this is being used with a fixture that will resolve a logger via DI</param>
+    protected UnitTest(ITestOutputHelper testOutputHelper, bool createLogger = true)
     {
-        LazyLogger = new Lazy<ILogger<LoggingTest>>(() =>
+        if (createLogger)
         {
-            ILogger serilogLogger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.InjectableTestOutput(_injectableTestOutputSink) // This NEEDS to stay synchronous
-                .Enrich.FromLogContext()
-                .CreateLogger();
+            LazyLogger = new Lazy<ILogger<LoggingTest>>(() =>
+            {
+                ILogger serilogLogger = new LoggerConfiguration()
+                    .MinimumLevel.Verbose()
+                    .WriteTo.InjectableTestOutput(_injectableTestOutputSink) // This NEEDS to stay synchronous
+                    .Enrich.FromLogContext()
+                    .CreateLogger();
 
-            _injectableTestOutputSink.Inject(testOutputHelper);
+                _injectableTestOutputSink.Inject(testOutputHelper);
 
-            Log.Logger = serilogLogger;
+                Log.Logger = serilogLogger;
 
-            return LoggerUtil.BuildLogger<UnitTest>();
-        }, true);
+                return LoggerUtil.BuildLogger<UnitTest>();
+            }, true);
+        }
 
         _faker = new Lazy<Faker>(() => new Faker(), true);
 
