@@ -34,11 +34,11 @@ public abstract class UnitTest : LoggingTest
 
     private readonly InjectableTestOutputSink _injectableTestOutputSink = new();
 
-    /// <param name="testOutputHelper"></param>
-    /// <param name="createLogger">Typically this is true unless this is being used with a fixture that will resolve a logger via DI</param>
-    protected UnitTest(ITestOutputHelper testOutputHelper, bool createLogger = true)
+    ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
+    /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
+    protected UnitTest(ITestOutputHelper? testOutputHelper = null)
     {
-        if (createLogger)
+        if (testOutputHelper != null)
         {
             LazyLogger = new Lazy<ILogger<LoggingTest>>(() =>
             {
@@ -48,7 +48,7 @@ public abstract class UnitTest : LoggingTest
                     .Enrich.FromLogContext()
                     .CreateLogger();
 
-                _injectableTestOutputSink.Inject(testOutputHelper);
+                _injectableTestOutputSink.Inject(testOutputHelper!);
 
                 Log.Logger = serilogLogger;
 
