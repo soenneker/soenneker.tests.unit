@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using AutoBogus;
 using Bogus;
 using Microsoft.Extensions.Logging;
@@ -56,8 +57,8 @@ public abstract class UnitTest : LoggingTest
             }, true);
         }
 
-        _faker = new Lazy<Faker>(() => new Faker(), true);
+        _faker = new Lazy<Faker>(() => new Faker(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        _autoFaker = new Lazy<IAutoFaker>(() => AutoBogus.AutoFaker.Create(), true);
+        _autoFaker = new Lazy<IAutoFaker>(() => AutoBogus.AutoFaker.Create(), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 }
