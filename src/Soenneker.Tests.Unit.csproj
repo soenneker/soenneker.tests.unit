@@ -41,6 +41,6 @@
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
         <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="1.0.37" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="1.0.15" />
-        <PackageReference Include="Soenneker.Utils.Logger" Version="1.0.27" />
+        <PackageReference Include="Soenneker.Utils.Logger" Version="1.0.28" />
     </ItemGroup>
 </Project>
