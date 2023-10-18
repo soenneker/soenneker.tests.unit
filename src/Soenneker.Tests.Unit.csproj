@@ -39,7 +39,7 @@
         <PackageReference Include="AutoBogus" Version="2.13.1" />
 
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-        <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="1.0.57" />
+        <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="1.0.58" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="1.0.32" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="1.0.70" />
     </ItemGroup>
