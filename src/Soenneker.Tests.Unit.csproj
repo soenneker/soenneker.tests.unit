@@ -38,7 +38,7 @@
         <None Include="..\icon.png" Pack="true" PackagePath="\" />
         <PackageReference Include="AutoBogus" Version="2.13.1" />
 
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
         <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="1.0.64" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="1.0.36" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="1.0.84" />
