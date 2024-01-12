@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading;
-using AutoBogus;
 using Bogus;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Sinks.XUnit.Injectable;
 using Serilog.Sinks.XUnit.Injectable.Extensions;
 using Soenneker.Tests.Logging;
+using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.Logger;
 using Xunit.Abstractions;
 using ILogger = Serilog.ILogger;
@@ -59,6 +59,6 @@ public abstract class UnitTest : LoggingTest
 
         _faker = new Lazy<Faker>(() => new Faker(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        _autoFaker = new Lazy<IAutoFaker>(() => AutoBogus.AutoFaker.Create(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _autoFaker = new Lazy<IAutoFaker>(() => Utils.AutoBogus.AutoFaker.Create(), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 }
