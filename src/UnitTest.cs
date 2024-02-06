@@ -6,6 +6,7 @@ using Serilog;
 using Serilog.Sinks.XUnit.Injectable;
 using Serilog.Sinks.XUnit.Injectable.Extensions;
 using Soenneker.Tests.Logging;
+using Soenneker.Utils.AutoBogus;
 using Soenneker.Utils.AutoBogus.Abstract;
 using Soenneker.Utils.Logger;
 using Xunit.Abstractions;
@@ -59,6 +60,6 @@ public abstract class UnitTest : LoggingTest
 
         _faker = new Lazy<Faker>(() => new Faker(), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        _autoFaker = new Lazy<IAutoFaker>(() => Utils.AutoBogus.AutoFaker.Create(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _autoFaker = new Lazy<IAutoFaker>(() => new AutoFaker(), LazyThreadSafetyMode.ExecutionAndPublication);
     }
 }
