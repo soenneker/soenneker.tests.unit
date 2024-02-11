@@ -7,7 +7,7 @@ using Serilog.Sinks.XUnit.Injectable;
 using Serilog.Sinks.XUnit.Injectable.Extensions;
 using Soenneker.Tests.Logging;
 using Soenneker.Utils.AutoBogus;
-using Soenneker.Utils.AutoBogus.Abstract;
+using Soenneker.Utils.AutoBogus.Config;
 using Soenneker.Utils.Logger;
 using Xunit.Abstractions;
 using ILogger = Serilog.ILogger;
@@ -27,18 +27,19 @@ public abstract class UnitTest : LoggingTest
     /// </summary>
     public Faker Faker => _faker.Value;
 
-    private readonly Lazy<IAutoFaker> _autoFaker;
+    private readonly Lazy<AutoFaker> _autoFaker;
 
     /// <summary>
     /// Used for generating fake objects with real values (without mocking)
     /// </summary>
-    public IAutoFaker AutoFaker => _autoFaker.Value;
+    public AutoFaker AutoFaker => _autoFaker.Value;
 
     private readonly InjectableTestOutputSink _injectableTestOutputSink = new();
 
     ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
     /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
-    protected UnitTest(ITestOutputHelper? testOutputHelper = null)
+    /// <param name="autoFakerConfig"></param>
+    protected UnitTest(ITestOutputHelper? testOutputHelper = null, AutoFakerConfig? autoFakerConfig = null)
     {
         if (testOutputHelper != null)
         {
@@ -50,7 +51,7 @@ public abstract class UnitTest : LoggingTest
                     .Enrich.FromLogContext()
                     .CreateLogger();
 
-                _injectableTestOutputSink.Inject(testOutputHelper!);
+                _injectableTestOutputSink.Inject(testOutputHelper);
 
                 Log.Logger = serilogLogger;
 
@@ -58,8 +59,8 @@ public abstract class UnitTest : LoggingTest
             }, true);
         }
 
-        _faker = new Lazy<Faker>(() => new Faker(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _autoFaker = new Lazy<AutoFaker>(() => new AutoFaker(autoFakerConfig), LazyThreadSafetyMode.ExecutionAndPublication);
 
-        _autoFaker = new Lazy<IAutoFaker>(() => new AutoFaker(), LazyThreadSafetyMode.ExecutionAndPublication);
+        _faker = new Lazy<Faker>(() => _autoFaker.Value.Faker, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 }
