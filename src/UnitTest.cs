@@ -8,7 +8,7 @@ using Serilog.Sinks.XUnit.Injectable.Extensions;
 using Soenneker.Tests.Logging;
 using Soenneker.Utils.AutoBogus;
 using Soenneker.Utils.Logger;
-using Xunit.Abstractions;
+using Xunit;
 using ILogger = Serilog.ILogger;
 
 namespace Soenneker.Tests.Unit;
