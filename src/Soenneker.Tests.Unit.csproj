@@ -38,7 +38,7 @@
         <None Include="..\icon.png" Pack="true" PackagePath="\" />
         
         <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="4.0.97" />
-        <PackageReference Include="Soenneker.Tests.Logging" Version="3.0.88" />
+        <PackageReference Include="Soenneker.Tests.Logging" Version="3.0.89" />
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="3.0.751" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="3.0.320" />
     </ItemGroup>
