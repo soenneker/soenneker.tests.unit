@@ -33,8 +33,6 @@ public abstract class UnitTest : LoggingTest
     /// </summary>
     public AutoFaker AutoFaker => _autoFaker.Value;
 
-    private readonly InjectableTestOutputSink _injectableTestOutputSink = new();
-
     ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
     /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
     /// <param name="autoFaker"></param>
@@ -44,13 +42,14 @@ public abstract class UnitTest : LoggingTest
         {
             LazyLogger = new Lazy<ILogger<LoggingTest>>(() =>
             {
-                ILogger serilogLogger = new LoggerConfiguration()
-                    .MinimumLevel.Verbose()
-                    .WriteTo.InjectableTestOutput(_injectableTestOutputSink) // This NEEDS to stay synchronous
-                    .Enrich.FromLogContext()
-                    .CreateLogger();
+                var sink = new InjectableTestOutputSink();
 
-                _injectableTestOutputSink.Inject(testOutputHelper);
+                ILogger serilogLogger = new LoggerConfiguration().MinimumLevel.Verbose()
+                                                                 .WriteTo.InjectableTestOutput(sink) // This NEEDS to stay synchronous
+                                                                 .Enrich.FromLogContext()
+                                                                 .CreateLogger();
+
+                sink.Inject(testOutputHelper);
 
                 Log.Logger = serilogLogger;
 
