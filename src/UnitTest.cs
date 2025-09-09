@@ -1,15 +1,16 @@
-﻿using System;
-using System.Threading;
-using Bogus;
+﻿using Bogus;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using Serilog.Extensions.Logging;
 using Serilog.Sinks.XUnit.Injectable;
 using Serilog.Sinks.XUnit.Injectable.Extensions;
 using Soenneker.Tests.Logging;
 using Soenneker.Utils.AutoBogus;
-using Soenneker.Utils.Logger;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Serilog.Core;
 using Xunit;
-using ILogger = Serilog.ILogger;
 
 namespace Soenneker.Tests.Unit;
 
@@ -17,7 +18,7 @@ namespace Soenneker.Tests.Unit;
 /// A base class providing Faker, AutoFaker, and logging. <para/>
 /// Does NOT have the ability to resolve services (there's no ServiceProvider involved when instantiating this)
 /// </summary>
-public abstract class UnitTest : LoggingTest
+public abstract class UnitTest : LoggingTest, IAsyncLifetime
 {
     private readonly Lazy<Faker> _faker;
 
@@ -33,6 +34,8 @@ public abstract class UnitTest : LoggingTest
     /// </summary>
     public AutoFaker AutoFaker => _autoFaker.Value;
 
+    private readonly ILoggerFactory? _standaloneFactory;
+
     ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
     /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
     /// <param name="autoFaker"></param>
@@ -40,31 +43,39 @@ public abstract class UnitTest : LoggingTest
     {
         if (testOutputHelper != null)
         {
-            LazyLogger = new Lazy<ILogger<LoggingTest>>(() =>
-            {
-                var sink = new InjectableTestOutputSink();
+            // Build a PRIVATE Serilog logger (do NOT assign to Log.Logger)
+            var standaloneSink = new InjectableTestOutputSink();
+            standaloneSink.Inject(testOutputHelper);
 
-                ILogger serilogLogger = new LoggerConfiguration().MinimumLevel.Verbose()
-                                                                 .WriteTo.InjectableTestOutput(sink) // This NEEDS to stay synchronous
-                                                                 .Enrich.FromLogContext()
-                                                                 .CreateLogger();
+            Logger serilog = new LoggerConfiguration().MinimumLevel.Verbose()
+                .WriteTo.InjectableTestOutput(standaloneSink)
+                .Enrich.FromLogContext()
+                .CreateLogger();
 
-                sink.Inject(testOutputHelper);
+            // Provider owns the Serilog logger and will dispose it
+            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: true);
 
-                Log.Logger = serilogLogger;
+            _standaloneFactory = LoggerFactory.Create(b => b.AddProvider(standaloneProvider));
 
-                return LoggerUtil.BuildLogger<UnitTest>();
-            }, true);
+            // Provide a Microsoft ILogger<T> source for this test
+            LazyLogger = new Lazy<ILogger<LoggingTest>>(() => _standaloneFactory.CreateLogger<LoggingTest>(), LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        _autoFaker = new Lazy<AutoFaker>(() =>
-        {
-            if (autoFaker != null)
-                return autoFaker;
-
-            return new AutoFaker();
-        }, LazyThreadSafetyMode.ExecutionAndPublication);
-
+        _autoFaker = new Lazy<AutoFaker>(() => autoFaker ?? new AutoFaker(), LazyThreadSafetyMode.ExecutionAndPublication);
         _faker = new Lazy<Faker>(() => _autoFaker.Value.Faker, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _standaloneFactory?.Dispose();
+
+        GC.SuppressFinalize(this);
+
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask InitializeAsync()
+    {
+        return ValueTask.CompletedTask;
     }
 }
