@@ -65,16 +65,14 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
         _faker = new Lazy<Faker>(() => _autoFaker.Value.Faker, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public ValueTask DisposeAsync()
+    public virtual ValueTask DisposeAsync()
     {
         _standaloneFactory?.Dispose();
-
-        GC.SuppressFinalize(this);
 
         return ValueTask.CompletedTask;
     }
 
-    public ValueTask InitializeAsync()
+    public virtual ValueTask InitializeAsync()
     {
         return ValueTask.CompletedTask;
     }
