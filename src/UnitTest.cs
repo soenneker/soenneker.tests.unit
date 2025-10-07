@@ -10,6 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog.Core;
+using Soenneker.Extensions.ValueTask;
 using Xunit;
 
 namespace Soenneker.Tests.Unit;
@@ -36,6 +37,8 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
 
     private readonly ILoggerFactory? _standaloneFactory;
 
+    private readonly InjectableTestOutputSink _sink;
+
     ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
     /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
     /// <param name="autoFaker"></param>
@@ -44,16 +47,16 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
         if (testOutputHelper != null)
         {
             // Build a PRIVATE Serilog logger (do NOT assign to Log.Logger)
-            var standaloneSink = new InjectableTestOutputSink();
-            standaloneSink.Inject(testOutputHelper);
+            _sink = new InjectableTestOutputSink();
+            _sink.Inject(testOutputHelper);
 
             Logger serilog = new LoggerConfiguration().MinimumLevel.Verbose()
-                .WriteTo.InjectableTestOutput(standaloneSink)
+                .WriteTo.InjectableTestOutput(_sink)
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
             // Provider owns the Serilog logger and will dispose it
-            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: true);
+            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: false);
 
             _standaloneFactory = LoggerFactory.Create(b => b.AddProvider(standaloneProvider));
 
@@ -65,11 +68,10 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
         _faker = new Lazy<Faker>(() => _autoFaker.Value.Faker, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
-    public virtual ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
+        await _sink.DisposeAsync().NoSync();
         _standaloneFactory?.Dispose();
-
-        return ValueTask.CompletedTask;
     }
 
     public virtual ValueTask InitializeAsync()
