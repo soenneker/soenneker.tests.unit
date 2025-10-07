@@ -36,6 +36,7 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
     public AutoFaker AutoFaker => _autoFaker.Value;
 
     private readonly ILoggerFactory? _standaloneFactory;
+    private readonly SerilogLoggerProvider? _provider;
     private readonly InjectableTestOutputSink? _sink;
     private readonly Logger? _serilogLogger;
 
@@ -57,9 +58,9 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
 
             // Keep a reference to the Serilog logger, and prevent provider from disposing it
             _serilogLogger = serilog;
-            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: false);
+            _provider = new SerilogLoggerProvider(serilog, dispose: false);
 
-            _standaloneFactory = LoggerFactory.Create(b => b.AddProvider(standaloneProvider));
+            _standaloneFactory = LoggerFactory.Create(b => b.AddProvider(_provider));
 
             // Provide a Microsoft ILogger<T> source for this test
             LazyLogger = new Lazy<ILogger<LoggingTest>>(() => _standaloneFactory.CreateLogger<LoggingTest>(), LazyThreadSafetyMode.ExecutionAndPublication);
@@ -73,6 +74,9 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
     {
         // Stop MS logger usage
         _standaloneFactory?.Dispose();
+
+        if (_provider != null)
+            await _provider.DisposeAsync();
 
         if (_serilogLogger != null)
             await _serilogLogger.DisposeAsync();
