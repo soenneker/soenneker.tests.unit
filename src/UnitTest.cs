@@ -37,6 +37,7 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
 
     private readonly ILoggerFactory? _standaloneFactory;
     private readonly InjectableTestOutputSink? _sink;
+    private readonly Logger? _serilogLogger;
 
     ///<summary>Initializes faker and AutoFaker, and optionally creates a logger (which if you're using a fixture, you should not pass testOutputHelper)</summary>
     /// <param name="testOutputHelper">If you do not pass this, you will not get logger capabilities</param>
@@ -54,8 +55,9 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
                 .Enrich.FromLogContext()
                 .CreateLogger();
 
-            // Provider owns the Serilog logger and will dispose it
-            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: true);
+            // Keep a reference to the Serilog logger, and prevent provider from disposing it
+            _serilogLogger = serilog;
+            var standaloneProvider = new SerilogLoggerProvider(serilog, dispose: false);
 
             _standaloneFactory = LoggerFactory.Create(b => b.AddProvider(standaloneProvider));
 
@@ -69,10 +71,15 @@ public abstract class UnitTest : LoggingTest, IAsyncLifetime
 
     public virtual async ValueTask DisposeAsync()
     {
+        // Stop MS logger usage
         _standaloneFactory?.Dispose();
 
+        if (_serilogLogger != null)
+            await _serilogLogger.DisposeAsync();
+
         if (_sink != null)
-            await _sink.DisposeAsync().NoSync();
+            await _sink.DisposeAsync()
+                .NoSync();
     }
 
     public virtual ValueTask InitializeAsync()
