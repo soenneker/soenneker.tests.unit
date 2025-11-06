@@ -39,7 +39,7 @@
         
         <PackageReference Include="Serilog.Sinks.XUnit.Injectable" Version="4.0.147" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="4.0.116" />
-        <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.811" />
+        <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.812" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.379" />
     </ItemGroup>
 </Project>
