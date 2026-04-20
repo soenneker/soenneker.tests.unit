@@ -1,10 +1,8 @@
-﻿using Xunit;
-
-namespace Soenneker.Tests.Unit.Tests;
+﻿namespace Soenneker.Tests.Unit.Tests;
 
 public class UnitTestTests
 {
-    [Fact]
+    [Test]
     public void Default()
     {
     }
