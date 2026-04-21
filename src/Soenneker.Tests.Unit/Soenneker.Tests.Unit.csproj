@@ -46,9 +46,9 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.ValueTask" Version="4.0.113" />
-        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.4" />
+        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.5" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="4.0.139" />
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.889" />
-        <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.471" />
+        <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.472" />
     </ItemGroup>
 </Project>
