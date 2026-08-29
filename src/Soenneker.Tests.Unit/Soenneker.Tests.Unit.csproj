@@ -46,6 +46,6 @@
         <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.84" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="4.0.151" />
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.929" />
-        <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.530" />
+        <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.532" />
     </ItemGroup>
 </Project>
