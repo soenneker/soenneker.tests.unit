@@ -5,25 +5,42 @@
 
 # Soenneker.Tests.Unit
 
-A base class providing Faker, AutoFaker, and logging. Does NOT have the ability to resolve services (there's no ServiceProvider involved when instantiating this).
+A TUnit base class with Bogus, AutoFaker, and per-test Serilog output, without a dependency-injection container.
 
-## Install
+## Installation
 
 ```bash
 dotnet add package Soenneker.Tests.Unit
 ```
 
-## What you get
+## Usage
 
-- `UnitTest` — A base class providing Faker, AutoFaker, and logging. Does NOT have the ability to resolve services (there's no ServiceProvider involved when instantiating this).
+```csharp
+using Soenneker.Tests.Unit;
 
-## API at a glance
+public sealed class OrderNumberTests : UnitTest
+{
+    [Test]
+    public async Task Formats_customer_and_sequence()
+    {
+        string customer = Faker.Random.AlphaNumeric(8);
+        var request = AutoFaker.Generate<CreateOrderRequest>();
 
-| API | What it does | Result / important behavior |
-| --- | --- | --- |
-| `UnitTest.Faker` | Syntactic sugar for lazy Faker. | Syntactic sugar for lazy Faker. |
-| `UnitTest.AutoFaker` | Used for generating fake objects with real values (without mocking). | Used for generating fake objects with real values (without mocking). |
+        Logger.LogInformation("Checking order number for {Customer}", customer);
 
-## Practical notes
+        string result = OrderNumber.Create(customer, request.Sequence);
 
-- Dispose instances you own when their scope ends so held resources can be released.
+        await Assert.That(result).StartsWith(customer);
+    }
+}
+```
+
+`Faker` and `AutoFaker` are created lazily for each test-class instance. The Bogus `Faker` exposed by the base is the one owned by that `AutoFaker`, so both follow the same generator configuration.
+
+`Logger` writes through a private Serilog pipeline to the active TUnit test context. TUnit calls the base class's asynchronous lifecycle methods and the pipeline is released during test teardown.
+
+## Choosing the right base
+
+`UnitTest` intentionally has no `IServiceProvider` and cannot resolve application services. Use `Soenneker.Tests.HostedUnit` with `Soenneker.TestHosts.Unit` when the subject needs dependency injection or scoped services.
+
+Derived infrastructure can pass an existing `AutoFaker` to the protected constructor. It can also set `enableLogging: false` when logging is supplied by a host, but must then configure `LazyLogger` before using `Logger` or a logged `Delay`.

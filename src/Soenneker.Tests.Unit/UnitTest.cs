@@ -16,8 +16,7 @@ using TUnit.Core.Interfaces;
 namespace Soenneker.Tests.Unit;
 
 /// <summary>
-/// A base class providing Faker, AutoFaker, and logging. <para/>
-/// Does NOT have the ability to resolve services (there's no ServiceProvider involved when instantiating this).
+/// Provides TUnit tests with fake-data generators and per-test logging, without creating a dependency-injection container.
 /// </summary>
 public abstract class UnitTest : LoggingTest, IAsyncInitializer, IAsyncDisposable
 {
@@ -32,12 +31,12 @@ public abstract class UnitTest : LoggingTest, IAsyncInitializer, IAsyncDisposabl
     private ValueAtomicBool _disposed;
 
     /// <summary>
-    /// Syntactic sugar for lazy Faker.
+    /// Gets the lazily created Bogus generator.
     /// </summary>
     public Faker Faker => _faker.Value;
 
     /// <summary>
-    /// Used for generating fake objects with real values (without mocking).
+    /// Gets the lazily created object-graph generator.
     /// </summary>
     public AutoFaker AutoFaker => _autoFaker.Value;
 
