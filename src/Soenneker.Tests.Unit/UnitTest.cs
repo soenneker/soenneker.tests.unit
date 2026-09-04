@@ -18,6 +18,7 @@ namespace Soenneker.Tests.Unit;
 /// <summary>
 /// Provides TUnit tests with fake-data generators and per-test logging, without creating a dependency-injection container.
 /// </summary>
+/// <inheritdoc cref="IAsyncInitializer" />
 public abstract class UnitTest : LoggingTest, IAsyncInitializer, IAsyncDisposable
 {
     private readonly Lazy<Faker> _faker;
