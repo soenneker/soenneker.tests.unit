@@ -42,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.99" />
+        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.102" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="4.0.156" />
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.953" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.552" />
