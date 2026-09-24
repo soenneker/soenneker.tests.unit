@@ -47,4 +47,7 @@
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.964" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.565" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Soenneker.Atomics.ValueBools" Version="4.0.44" />
+    </ItemGroup>
 </Project>
