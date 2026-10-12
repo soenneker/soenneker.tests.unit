@@ -43,12 +43,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.134" />
+        <PackageReference Include="Soenneker.Serilog.Sinks.TUnit" Version="4.0.135" />
         <PackageReference Include="Soenneker.Tests.Logging" Version="4.0.161" />
         <PackageReference Include="Soenneker.Utils.AutoBogus" Version="4.0.971" />
         <PackageReference Include="Soenneker.Utils.Logger" Version="4.0.574" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Soenneker.Atomics.ValueBools" Version="4.0.46" />
+        <PackageReference Include="Soenneker.Atomics.ValueBools" Version="4.0.47" />
     </ItemGroup>
 </Project>
