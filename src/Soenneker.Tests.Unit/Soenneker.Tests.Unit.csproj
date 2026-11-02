@@ -49,6 +49,5 @@
         <PackageReference Include="Soenneker.Utils.Logger" Version="11.0.591" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Soenneker.Atomics.ValueBools" Version="11.0.55" />
     </ItemGroup>
 </Project>
